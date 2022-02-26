@@ -1,28 +1,133 @@
 ---
-title: "P2"
-output: pdf_document
+title: "Distribution of Wealth Among Swedish Households"
+author: 
+  - Tomoya Fujikawa
+thanks: "Code and data are available at: https://github.com/tomoya117/STA304-P2"
+date: "`r format(Sys.time(), '27/02/2022')`"
+abstract: "There are various way to accumulate wealth over time and the method each individual uses may depend on their risk level. This paper focuses on further investigating some of the aspects written in a analysis paper, 'Rich Pickings? Risk, Return and Skill in Household Wealth', which investigates the risk and returns of household wealth in Sweden. The data used in the original paper is being used in this paper to provide further analysis of the dataset. We visualise the data using tables and graphs, and observe a difference in distribution of wealth of households at each wealth level. The findings can be implemented as a benchmark for individuals who seek to accumulate wealth over time."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib 
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(haven)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+knitr::opts_chunk$set(echo=FALSE)
 ```
 
-## R Markdown
+# Introduction
+Although it may be a overstatement to say that accumulating significant amount of wealth is the goal of many individuals, it certainly is one of the things people consider during their adulthood. Some may work in the same company for their whole life to accumulate wealth slow and steady, while others may gamble or buy lottery and try to win a large amount of money in a short period of time. The method take decide to employ can vary depending on many factors such as education and knowledge level, but mainly, their risk level. A risk-averse individuals would choose a safe and steady method as they dislike being under the risk of losing, while risk-takers would challenge for high-risk high-return methods. However, it is impossible to have absolutely no risk and also extremely unlikely for an individuals to spend all of their wealth into risky gambling. People tend to always go for somewhere in between according to their risk level. So, the goal of individuals is in accumulation of wealth is to find out the best distribution of wealth to gain a required return while maintaining the level of risk to their appropriate level. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In order to achieve this goal, it is important to have financial literacy, which is the ability and knowledge on how to manage money. This is because each individual's choices become very limited without financial literacy. For example, purchasing company stocks requires investigation of the company in order to decide whether you actually want to purchase or not. Without financial literacy, the decision cannot be made or the risk of each purchase becomes significantly more risky than those with knowledge. Financial literacy can greatly help individuals to manage their distribution of wealth to reach their target goal. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The wealth can be distributed to many factors such as private equity, real estate wealth, debt, and more. Each type of wealth has different risk level and return, and the distribution varies depending the individual's risk level. It is usually the case that high risk is compensated by high returns [@cite_Investopedia]. Thus, it can be anticipated that individuals with more private equity, which tends to have very high risk compared to other types of wealth, to be more wealthier than those who distribute less to private equity. Also, the population of individuals who distribute high percentage of their wealth in private equity should be significantly lower than the population of individuals who distribute their wealth more evenly on other types of wealth. 
 
-```{r cars}
-summary(cars)
+The aim of the paper is to analyze the data of wealth of households in Sweden to investigate the factors that affect the accumulation of wealth. The conclusion from this analysis can be implemented in other countries as well to set it as the benchmark for accumulation of wealth according to each individual's risk level. 
+
+The remainder of this paper is : Section \@ref(data) introduces the data and visualizes it in various ways. Section \@ref(results) explains the results of analysis. Section \@ref(discussion) describes strength and limitations of the data and discusses possible further investigations to improve the analysis. Section \@ref(conclusion) summarizes the analysis and states the conclusion.
+
+# Data
+This paper is going to focus on the data about Distribution of wealth of households in Sweden, acquired from Statistics Sweden [@Statistics_Sweden] and FINBAS [@FINBAS], a financial database maintained by the Swedish House of Finance, and it will be using a statistical programming language, `R` [@cite_r], for analysis. The packages used in this analysis are `tidyverse` [@cite_tidyverse] and `knitr` [@cite_knitr]. The tidyverse package is used to manipulate the data set and knitr package helps to produce tables and graphs for visualization. The data set used in this paper is a processed data set used in the economics paper, "Rich Pickings? Risk, Return, and Skill in Household Wealth" [@cite_paper]. The processed data set acquired from the original paper contains information such as expected returns and volatility of individual's gross wealth divided by wealth levels. 
+
+In order to analyse and study this data, simplification and visualization processes are essential. To make the process of visualization easy, first clean the data set so that the data set includes only the information necessary for analysis. To begin with, download the data set using the `read_csv` function as the type of data set is in csv. Since the only variables that will be used for analysis are columns 2, 3, 4 and 5, use the `subset` and `select` functions to pull out these columns. Furthermore, since the data set contains rows that are irrelevant, use the choose function, `c`, to select rows that are only necessary for the analysis. Lastly, since the data set does not have columns named properly, use the `colnames` function to rename the columns appropriately. This process is necessary to simplify the analysis process as well as a precaution to prevent any mistakes made during the process. 
+```{r, include=FALSE}
+gross_wealth <- read_csv('T1. Gross wealth-Table 1.csv')
+gross_wealth <- data.frame(gross_wealth)
+subset(gross_wealth, select = c(2, 3, 4))
+gross_wealth <- subset(gross_wealth, select = c(2, 3, 4))
+gross_wealth <- gross_wealth[-c(1, 2, 3, 4, 5, 6, 7), ]
+colnames(gross_wealth) <- c('Wealth Level', 'Expected Return', 'Volatility')
+gross_wealth$`Expected Return` <- format(round(as.numeric(as.character(gross_wealth$`Expected Return`)), 2), nsmall = 2)
+gross_wealth$Volatility = format(round(as.numeric(as.character(gross_wealth$Volatility)), 2), nsmall = 2)
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+The table below, Table 1, is the visualization of the simplified data set exhibited in the form of a table. To create this table, `kable` function was used to add captions and column names as well as some lines to provide high quality visualization. 
+```{r data, echo = FALSE}
+gross_wealth |>
+  select(`Wealth Level`, `Expected Return`, Volatility) |>
+  slice(1:16) |>
+  kable(
+    caption = "The Portfolio Summary of Households in Sweden", 
+    col.names = c("Wealth Level", "Expected Return(%)", "Volatility(%)"),
+    digits = 1,
+    booktabs = TRUE, 
+    linesep = ""
+  )
 ```
+The wealth level is divided by the household's wealth rank. P10-P20 refers to households ranked between the 10th and 20th percentiles of the net wealth distribution. The difference in the range of rankings become smaller after the 90th percentile point because the gap in the gross wealth of people at higher percentiles is significant than those in the lower percentile, and so the gaps in the numbers of other variables. The unit of variables other than the wealth level is in percentages of the gross wealth of individuals. It is important to keep in mind that as the wealth level rises, the total wealth per percentage increases and so even if two wealth levels have the same percentage, for instance for expected return, it does not mean that their absolute return will be the same. The households at higher wealth level would receive more return with the same return rate than those at the lower wealth level. 
+\newpage
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r return}
+gross_wealth |> 
+  group_by(`Wealth Level`) |>
+ggplot(aes(x = `Wealth Level`, y = c(`Expected Return`))) +
+  geom_col(alpha = 0.8) +
+    theme_minimal() + 
+  labs(x = "Wealth Level Percentiles", y = "Percentage(%)", title = "Figure 1: Expected Return for Each Wealth Level", caption = "Statistics Sweden") + scale_x_discrete(guide=guide_axis(n.dodge=3))
+```
+```{r volatility}
+gross_wealth |> 
+    group_by(`Wealth Level`) |>
+ggplot(aes(x = `Wealth Level`, y = c(Volatility))) +
+  geom_col(alpha = 0.8) +
+    theme_minimal() + 
+  labs(x = "Wealth Level Percentiles", y = "Percentage(%)", title = "Figure 2: Volatility for Each Wealth Level", caption = "Statistics Sweden") + scale_x_discrete(guide=guide_axis(n.dodge=3))
+```
+Figure 1 shows the expected return on wealth for each wealth level using bar plot. The x-axis is categorized by each wealth level, and the y-axis is the percentage return on wealth. Figure 2 shows the volatility, which is the risk taken by households, for each wealth level. The x-axis here shows the volatility percentage. Visualization of these graphs enables an easy observation of the trend as the wealth level changes. 
+
+To create these two figures, ggplot [@cite_ggplot2] function was used. The type of graphs is bar plot and it was created using `geom_col` function. `geom_col` function was used instead of `geom_bar` function because the class of y-value is numerical and `geom_col` function is more appropriate for this class. Since the labels on the x-axis are too long and they overlap each over, the `scale_x_discrete` function was used to arrange the labels so that they are leveled and easy to read. 
+
+Table 2 is a table showing the share of risky asset in complete financial portfolio for each wealth level. It was created using the same `kable` function using a different sets of processed data set which contained the necessary data. It was again read by `read_csv` function and organized by using `data.frame`, `subset` and` colnames` functions. This table allows for a clear visualization of how much weight households in each wealth level puts in risky asset instead of a risk-free asset. 
+
+```{r, include=FALSE}
+risky_asset <- read_csv('A.T7 Pension Parameters-Table 1.csv')
+risky_asset <- data.frame(risky_asset)
+risky_asset <- subset(risky_asset, select = c(1, 2))
+risky_asset <- risky_asset[c(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20), ]
+colnames(risky_asset) <- c('Wealth Level', 'Share of Risky Asset (%)')
+risky_asset$`Share of Risky Asset (%)` <- format(round(as.numeric(as.character(risky_asset$`Share of Risky Asset (%)` )), 3), nsmall = 3)
+```
+```{r}
+risky_asset |> 
+  slice(1:16) |>
+  kable(
+    caption = "Share of Risky Asset in Complete Financial Portfolio", 
+    digits = 1,
+    booktabs = TRUE, 
+    linesep = ""
+  )
+```
+```{r}
+risky_asset |> 
+  group_by(`Wealth Level`) |>
+ggplot(aes(x = `Wealth Level`, y = `Share of Risky Asset (%)`)) +
+  geom_col(alpha = 0.8) +
+    theme_minimal() + 
+  labs(x = "Wealth Level Percentiles", y = "Percentage(%)", title = "Figure 3: Share of Risky Asset for Each Wealth Level", caption = "Statistics Sweden") + scale_x_discrete(guide=guide_axis(n.dodge=3))
+```
+Figure 3 is the visualization of the table 2 using the bar plot. It again shows a nice upward trend in the share of risky asset as the wealth level increases. However, there is a small drop, by 0.01%, for the wealth level of P99.9-P99.99 percentiles. 0.01% drop may not seem significant, but since their amount of wealth is extremely high, even a 0.01% accounts for a huge percentage for those at a lower wealth level.
+This graph was also produced using the same functions as Figures 1 and 2 with ggplot [@cite_ggplot2] function and geom_col function.
+
+# Results
+Both visualizations, the two graphs and the table, show clear trends that there is a positive relationship between the wealth level and both variables in the y-axis, expected return, volatility, and share of risky asset. Since the graphs are both bar graphs, it is difficult to confirm, but it seems to show a linear trend between the variables. These trends indicate that the more wealth you have, higher return in percentage you receive, which also means a much higher return in terms of the amount. However, it is also the case that there is a higher risk and a variability in the amount of return you receive as you get wealthier. 
+
+# Discussion
+The data shows a very clear trend and the observation is that there is a positive relationship between the wealth level and the two variables, expected return and volatility, and it seems very accurate as the trend seems linear. However, there are some variables we may need to consider before making a conclusion.
+
+The data used in this paper is only applicable to households in Sweden and it may be the case that the results from this investigation cannot be implemented to households in other countries. There are several factors of why this statement might be true. One of the reasons is education. It is very likely that higher level of education leads to more income, thus, more accumulation of wealth over time. However, it is also true that majority of households in the higher percentiles of wealth level generate income through private equity. Financial education has been an ongoing project in Sweden for some time and this may be one of the reasons why the trend seems very linear [@cite_GMW]. As people have more financial literacy, the more likely they engage in private equity, hence, they receive higher expected return. Moreover,since private equity is one of the riskiest type of wealth distribution, it is very natural that they have higher volatility. To apply this investigation to households in other countries, the education system of a country must be similar to that in Sweden. For instance, some schools in the United States spend time to teach finance to students an engage in a mock stock trades to build knowledge and skill set about finance [@cite_USfinance]. However, it is not the case in Japan, and that most people must learn finance on their own. This difference in education system may play a huge factor in whether this investigation is also applicable to each country or not.
+
+It is very obvious from all the visualizations that higher the wealth level is, the more weight households put on risky assets, hence, they receive higher returns with high volatility. However, it is too soon to assume that simply putting more weight of your wealth in risky assets such as private equity leads to more accumulation of wealth. This is because there are different risk levels within private equity. Some private equity may have high return and high risk, while some others have less return and less risk. As mentioned in the introduction,the level of risk each individual takes depends on how much risk they want to take to gain a certain level of return. For that reason, there is a variation in the return rate and volatility as well as share of risky asset for households in lower wealth levels. For P20-P30 households, they put more weight on risky asset compared to households in P30-P40. However, both the return rate and volatility are lower for P20-30 than P30-P40households. This is because households in P20-P30 own risky assets that are relatively safe compared to those that P30-P40 households own.
+
+The weakness of this investigation is that from all the visualizations and results, it is easy to assume that owning more risky assets lets to more return, thus, better accumulation of wealth.  However, there are obviously more parts to it such as what type of risky asset and how households in higher wealth level hedge risks. Simply putting more weight on risky asset without any knowledge or education would lead to higher volatility and it may become like gambling.  To enhance the implementation of these results, a further investigation of what type of risky people own and how they hedge risks is important.
+
+# Conclusion 
+Although the data set is highly credible as it is provided by the Statistics Sweden [@Statistics_Sweden], simply observing the trend for each wealth level cannot produce a strong enough conclusion to discover the reasons why some people reach the top few percent of wealth level while others remain in the average area. A more detailed investigation of types of risky assets and ways of hedging risks is needed to give guidance to those in the lower wealth level households as they may not be receiving the same amount and quality of education compared to those households in the higher wealth levels.
+
+
+\newpage
+
+
+# References
