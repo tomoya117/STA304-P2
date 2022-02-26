@@ -3,7 +3,7 @@
 library(tidyverse)
 library(knitr)
 library(kableExtra)
-#### Load and clean data set
+#### Load and clean the data set
 private_equity <- read_csv('T7. Private equity-Table 1.csv')
 private_equity <- data.frame(private_equity)
 private_equity <- subset(private_equity, select = c(2, 3, 4, 5, 6))

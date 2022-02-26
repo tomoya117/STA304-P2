@@ -80,7 +80,7 @@ Figure 1 shows the expected return on wealth for each wealth level using bar plo
 
 To create these two figures, ggplot [@cite_ggplot2] function was used. The type of graphs is bar plot and it was created using `geom_col` function. `geom_col` function was used instead of `geom_bar` function because the class of y-value is numerical and `geom_col` function is more appropriate for this class. Since the labels on the x-axis are too long and they overlap each over, the `scale_x_discrete` function was used to arrange the labels so that they are leveled and easy to read. 
 
-Table 2 is a table showing the share of risky asset in complete financial portfolio for each wealth level. It was created using the same `kable` function using a different sets of processed data set which contained the necessary data. It was again read by `read_csv` function and organized by using `data.frame`, `subset` and` colnames` functions. This table allows for a clear visualization of how much weight households in each wealth level puts in risky asset instead of a risk-free asset. 
+Table 2 is a table showing the share of risky asset in complete financial portfolio for each wealth level. It was created using the same `kable` function using a different sets of processed data set which contained the necessary data. It was again read by `read_csv` function and organized by using `data.frame`, `subset` and` colnames` functions. This table allows for a clear visualization of how much weight households in each wealth level puts in risky asset instead of risk-free assets. 
 
 ```{r, include=FALSE}
 risky_asset <- read_csv('A.T7 Pension Parameters-Table 1.csv')

@@ -2,7 +2,7 @@
 #### Load library
 library(tidyverse)
 
-#### Load and clean data set
+#### Load and clean the data set
 portfolio <- read_csv('input_distributions_NW-Table 1.csv')
 portfolio <- data.frame(portfolio)
 portfolio <- portfolio[c(1, 2, 3, 4, 5, 6, 7), ]

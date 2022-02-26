@@ -3,7 +3,7 @@
 library(tidyverse)
 library(knitr)
 library(kableExtra)
-#### Load and clean data set
+#### Load and clean the data set
 real_estate <- read_csv('T6. Real estate-Table 1.csv')
 real_estate <- data.frame(real_estate)
 real_estate <- subset(real_estate, select = c(2, 3, 4, 6, 7, 8))
