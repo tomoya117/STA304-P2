@@ -1,4 +1,5 @@
 ### Replication of Figure 1
+#DOI: https://www.socialsciencereproduction.org/reproductions/226ea2d1-3483-4215-9522-a94d28938356/index
 #### Load library
 library(tidyverse)
 

@@ -1,4 +1,5 @@
 ### Replication of Table V
+#DOI: https://www.socialsciencereproduction.org/reproductions/c93e4281-f0f3-49cf-832e-9a23c1f94666/index
 #### Load library
 library(tidyverse)
 library(knitr)
